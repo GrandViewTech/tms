@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+	<persistence-unit name="master_persistence_unit" transaction-type="RESOURCE_LOCAL">
+		<class>com.loylty.application.entity.bo.master.Tenant</class>
+		<class>com.loylty.application.entity.bo.master.Activity</class>
+		<class>com.loylty.application.entity.bo.master.Role</class>
+		<class>com.loylty.application.entity.bo.master.ServerDetails</class>
+		<class>com.loylty.application.entity.bo.master.User</class>
+		<class>com.loylty.application.entity.bo.master.Country</class>
+		<class>com.loylty.application.entity.bo.master.State</class>
+		<class>com.loylty.application.entity.bo.master.City</class>
+		<class>com.loylty.application.entity.bo.master.Currency</class>
+	</persistence-unit>
+</persistence>
