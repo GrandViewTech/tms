@@ -1,4 +1,4 @@
-package lidsysBusinessService;
+package business;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,9 +23,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.loylty.application.entity.bo.master.City;
 import com.loylty.application.entity.bo.master.Country;
 import com.loylty.application.entity.bo.master.State;
-import com.loylty.application.service.master.business.CountryStateCityService;
+import com.loylty.application.service.business.master.business.CountryStateCityService;
 
-import lidsysBusinessService.util.LoggerUtil;
+import business.util.LoggerUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations =

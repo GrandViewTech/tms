@@ -1,4 +1,4 @@
-package lidsysBusinessService.util;
+package business.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -1,4 +1,4 @@
-package lidsysBusinessService;
+package business;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +13,11 @@ import com.loylty.application.entity.bo.constants.Status;
 import com.loylty.application.entity.bo.master.Activity;
 import com.loylty.application.entity.bo.master.Role;
 import com.loylty.application.entity.bo.master.User;
-import com.loylty.application.service.master.business.UserActivityService;
-import com.loylty.application.service.master.business.UserRoleService;
-import com.loylty.application.service.master.business.UserService;
+import com.loylty.application.service.business.master.business.UserActivityService;
+import com.loylty.application.service.business.master.business.UserRoleService;
+import com.loylty.application.service.business.master.business.UserService;
 
-import lidsysBusinessService.util.LoggerUtil;
+import business.util.LoggerUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations =

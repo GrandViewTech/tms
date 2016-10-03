@@ -1,4 +1,4 @@
-package lidsysBusinessService;
+package business;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -22,9 +22,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loylty.application.entity.bo.master.Currency;
-import com.loylty.application.service.master.business.CurrencyService;
+import com.loylty.application.service.business.master.business.CurrencyService;
 
-import lidsysBusinessService.util.LoggerUtil;
+import business.util.LoggerUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations =
