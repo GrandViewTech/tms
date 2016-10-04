@@ -1,11 +1,16 @@
 package business;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -13,9 +18,9 @@ import com.loylty.application.entity.bo.constants.Status;
 import com.loylty.application.entity.bo.master.Activity;
 import com.loylty.application.entity.bo.master.Role;
 import com.loylty.application.entity.bo.master.User;
-import com.loylty.application.service.business.master.business.UserActivityService;
-import com.loylty.application.service.business.master.business.UserRoleService;
-import com.loylty.application.service.business.master.business.UserService;
+import com.loylty.application.service.app.master.business.UserActivityService;
+import com.loylty.application.service.app.master.business.UserRoleService;
+import com.loylty.application.service.app.master.business.UserService;
 
 import business.util.LoggerUtil;
 
@@ -24,6 +29,25 @@ import business.util.LoggerUtil;
 	{ "classpath:spring/application-config.xml" })
 public class UserServiceTestCase
 	{
+		private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(UserServiceTestCase.class);
+		static
+			{
+				try
+					{
+						Resource resource = new ClassPathResource("properties" + File.separator + "log4j.properties");
+						Properties properties = new Properties();
+						properties.load(resource.getInputStream());
+						PropertyConfigurator.configure(properties);
+					}
+				catch (Exception exception)
+					{
+						logger.error(exception.getLocalizedMessage(), exception);
+					}
+					
+			}
+		final private static String	FILE_NAME		= "USER";
+		final private static String	DATA			= FILE_NAME + File.separator + "data";
+		final private static String	TESTCASE		= FILE_NAME + File.separator + "testCase";
 		
 		private static String		emailAddress	= "puneet.sharma@loylty.com";
 		@Autowired
@@ -73,10 +97,17 @@ public class UserServiceTestCase
 		@Test
 		public void associateRoleWithUser()
 			{
-				List<Role> roles = new ArrayList<Role>();
-				roles.add(userRoleService.findRoleByRoleName("CRUD"));
-				userService.assignRolesToUser(emailAddress, roles);
-				User user = userService.findUserByEmailAddress(emailAddress);
-				LoggerUtil.log("associateRoleWithUser", user);
+				try
+					{
+						List<Role> roles = new ArrayList<Role>();
+						roles.add(userRoleService.findRoleByRoleName("CRUD"));
+						userService.assignRolesToUser(emailAddress, roles);
+						User user = userService.findUserByEmailAddress(emailAddress);
+						LoggerUtil.log(TESTCASE, "associateRoleWithUser", user);
+					}
+				catch (Exception exception)
+					{
+						logger.error(exception.getLocalizedMessage(), exception);
+					}
 			}
 	}

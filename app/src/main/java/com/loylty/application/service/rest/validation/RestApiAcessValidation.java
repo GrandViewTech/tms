@@ -1,4 +1,9 @@
-package com.loylty.application.webservice.validation;
+package com.loylty.application.service.rest.validation;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Path;
 
@@ -6,38 +11,42 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.loylty.application.entity.annotations.ApplicationLevelAuthorization;
 import com.loylty.application.entity.annotations.UserLevelAuthorization;
+import com.loylty.application.entity.bo.master.Activity;
 import com.loylty.application.entity.bo.master.Role;
 import com.loylty.application.entity.bo.master.User;
 import com.loylty.application.entity.exception.UnAuthorizedAccessException;
-import com.loylty.application.service.master.business.UserService;
+import com.loylty.application.service.app.master.business.UserService;
 import com.loylty.application.service.util.SpringContext;
 
 @Aspect
 public class RestApiAcessValidation
 	{
 		private static org.apache.log4j.Logger	logger	= org.apache.log4j.Logger.getLogger(RestApiAcessValidation.class);
+		
 		@Autowired
 		private UserService						userService;
 		
-		@Before("execution(* com.loylty.application.webservice.api..*.*(..)) && @annotation(applicationLevelAuthorization) && @annotation(path) && args(sourceId,applicationId)")
-		public void validateApplicationAccess(Path path, ApplicationLevelAuthorization applicationLevelAuthorization, String sourceId, String applicationId)
+		@Before("execution(* com.loylty.application.service.rest.api..*.*(..))")
+		public void test()
 			{
-				logger.info("Request => sourceIdId :" + sourceId + " | applicationId : " + applicationId);
+				logger.info("test");
 			}
 			
-		@Before("execution(* com.loylty.application.webservice.api..*.*(..)) && @annotation(applicationLevelAuthorization) && @annotation(userLevelAuthorization) && @annotation(path) && args(sourceId,applicationId,tenantId,userId)")
-		public void validateApplicationAndUserAccess(Path path, ApplicationLevelAuthorization applicationLevelAuthorization, UserLevelAuthorization userLevelAuthorization, String sourceId, String applicationId, String tenantId, String userId)
-			{
-				logger.info("Request => sourceIdId :" + sourceId + " | applicationId : " + applicationId + " | tenantId : " + tenantId + " | userId : " + userId);
-				validateApplicationAccess(path, applicationLevelAuthorization, sourceId, applicationId);
-				validateUserAccess(path, userLevelAuthorization, tenantId, userId);
-			}
-			
-		@Before("execution(* com.loylty.application.webservice.api..*.*(..)) && @annotation(userLevelAuthorization) && @annotation(path) && args(tenantId,userId)")
+		@Before("execution(* com.loylty.application.service.rest.api..*.*(..)) && @annotation(userLevelAuthorization) && @annotation(path) && args(tenantId,userId)")
 		public void validateUserAccess(Path path, UserLevelAuthorization userLevelAuthorization, String tenantId, String userId)
 			{
+				Map<String, List<String>> privileges = new LinkedHashMap<String, List<String>>();
+				for (com.loylty.application.entity.annotations.Role role : userLevelAuthorization.roles())
+					{
+						String roleName = role.name();
+						List<String> activities = new ArrayList<String>();
+						for (String activity : role.activities())
+							{
+								activities.add(activity);
+							}
+						privileges.put(roleName, activities);
+					}
 				if ( SpringContext.isTenantIdConfigured(tenantId) )
 					{
 						User user = null;
@@ -50,7 +59,7 @@ public class RestApiAcessValidation
 								UserService userService = (UserService) SpringContext.getBean(tenantId, "userService");
 								user = userService.findUserByEmailAddress(userId);
 							}
-						validateUser(path.value(), tenantId, userId, user, userLevelAuthorization.roles(), userLevelAuthorization.activities());
+						validateUser(path.value(), tenantId, userId, user.getRoles(), privileges);
 					}
 				else
 					{
@@ -58,50 +67,72 @@ public class RestApiAcessValidation
 						UnAuthorizedAccessException authorizedAccessException = new UnAuthorizedAccessException("Tenant with tenantId : " + tenantId + " is not configured in system");
 						authorizedAccessException.setTenantId(tenantId);
 						authorizedAccessException.setUserId(userId);
-						authorizedAccessException.setRequiredActivities(userLevelAuthorization.activities());
-						authorizedAccessException.setRequiredRoles(userLevelAuthorization.roles());
+						authorizedAccessException.setPrivileges(privileges);
 						authorizedAccessException.setApi(path.value());
 						throw authorizedAccessException;
 						
 					}
 			}
 			
-		private void validateUser(String api, String tenantId, String userId, User user, String[] roles, String[] activities)
+		private void validateUser(String api, String tenantId, String userId, List<Role> userRoles, Map<String, List<String>> privileges)
 			{
-				if ( user == null )
+				Map<String, List<String>> requiredPrevileges = new LinkedHashMap<String, List<String>>();
+				for (Map.Entry<String, List<String>> privilege : privileges.entrySet())
 					{
-						UnAuthorizedAccessException authorizedAccessException = new UnAuthorizedAccessException("Invalid User".toUpperCase());
-						authorizedAccessException.setTenantId(tenantId);
-						authorizedAccessException.setUserId(userId);
-						authorizedAccessException.setRequiredActivities(activities);
-						authorizedAccessException.setRequiredRoles(roles);
-						authorizedAccessException.setApi(api);
-						throw authorizedAccessException;
-					}
-				for (String rs : roles)
-					{
-						rs = rs.trim();
-						boolean hasAccessForRole = false;
-						for (Role role : user.getRoles())
+						String requiredRole = privilege.getKey();
+						List<String> requiredActivities = new ArrayList<String>();
+						boolean hasAccessToRole = false;
+						for (Role userRole : userRoles)
 							{
-								String name = role.getName().trim();
-								if ( name.equalsIgnoreCase(rs) )
+								String name = userRole.getName();
+								if ( requiredRole.trim().equalsIgnoreCase(name) )
 									{
-										hasAccessForRole = true;
+										boolean hasAccessToActivity = false;
+										for (String requiredActivity : privilege.getValue())
+											{
+												for (Activity userActivity : userRole.getActivities())
+													{
+														String userActivityName = userActivity.getName();
+														if ( requiredActivity.trim().equalsIgnoreCase(userActivityName.trim()) )
+															{
+																hasAccessToActivity = true;
+															}
+													}
+												if ( !hasAccessToActivity )
+													{
+														requiredActivities.add(requiredActivity);
+													}
+											}
+											
+										hasAccessToRole = true;
 										break;
 									}
 							}
-						if ( hasAccessForRole == false )
+						if ( hasAccessToRole )
 							{
-								UnAuthorizedAccessException authorizedAccessException = new UnAuthorizedAccessException("Insufficient Privelidge".toUpperCase());
-								authorizedAccessException.setTenantId(tenantId);
-								authorizedAccessException.setUserId(userId);
-								authorizedAccessException.setRequiredActivities(activities);
-								authorizedAccessException.setRequiredRoles(roles);
-								authorizedAccessException.setApi(api);
-								throw authorizedAccessException;
+								if ( requiredActivities.size() > 0 )
+									{
+										requiredPrevileges.put(privilege.getKey(), requiredActivities);
+									}
 							}
+						else
+							{
+								requiredPrevileges.put(privilege.getKey(), privilege.getValue());
+							}
+					}
+				if ( requiredPrevileges.size() > 0 )
+					{
+						generateException(api, tenantId, userId, privileges);
 					}
 			}
 			
+		private void generateException(String api, String tenantId, String userId, Map<String, List<String>> privileges)
+			{
+				UnAuthorizedAccessException authorizedAccessException = new UnAuthorizedAccessException("Insufficient Privelidge".toUpperCase());
+				authorizedAccessException.setTenantId(tenantId);
+				authorizedAccessException.setUserId(userId);
+				authorizedAccessException.setPrivileges(privileges);
+				authorizedAccessException.setApi(api);
+				throw authorizedAccessException;
+			}
 	}

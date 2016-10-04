@@ -1,9 +1,7 @@
 package business.util;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
-import java.io.PrintStream;
 
 import org.apache.commons.io.FileUtils;
 
@@ -12,10 +10,11 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class LoggerUtil
 	{
-		private static ObjectMapper	objectMapper		= new ObjectMapper();
-		private static ObjectWriter	objectWriter		= objectMapper.writerWithDefaultPrettyPrinter();
-		private static File			errorFile			= new File("output" + File.separator + "error.log");
-		private static boolean		isPreviousRequired	= false;
+		private static org.apache.log4j.Logger	logger				= org.apache.log4j.Logger.getLogger(LoggerUtil.class);
+		
+		private static ObjectMapper				objectMapper		= new ObjectMapper();
+		private static ObjectWriter				objectWriter		= objectMapper.writerWithDefaultPrettyPrinter();
+		private static boolean					isPreviousRequired	= false;
 		
 		public static void log(String testCaseName, Object object)
 			{
@@ -39,14 +38,7 @@ public class LoggerUtil
 					}
 				catch (Exception exception)
 					{
-						try
-							{
-								exception.printStackTrace(new PrintStream(errorFile));
-							}
-						catch (FileNotFoundException fileNotFoundException)
-							{
-								fileNotFoundException.printStackTrace();
-							}
+						logger.error(exception.getLocalizedMessage(), exception);
 					}
 			}
 			
@@ -78,14 +70,7 @@ public class LoggerUtil
 					}
 				catch (Exception exception)
 					{
-						try
-							{
-								exception.printStackTrace(new PrintStream(errorFile));
-							}
-						catch (FileNotFoundException fileNotFoundException)
-							{
-								fileNotFoundException.printStackTrace();
-							}
+						logger.error(exception.getLocalizedMessage(), exception);
 					}
 			}
 	}

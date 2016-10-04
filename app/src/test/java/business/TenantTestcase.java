@@ -1,23 +1,28 @@
 package business;
 
 import java.io.File;
+import java.util.Properties;
+import java.util.UUID;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.loylty.application.entity.bo.constants.ProgramType;
 import com.loylty.application.entity.bo.constants.Status;
-import com.loylty.application.entity.bo.constants.TenantType;
 import com.loylty.application.entity.bo.master.Program;
 import com.loylty.application.entity.bo.master.Tenant;
 import com.loylty.application.entity.bo.master.User;
-import com.loylty.application.service.business.master.business.TenantService;
-import com.loylty.application.service.business.master.business.UserService;
+import com.loylty.application.service.app.master.business.TenantService;
+import com.loylty.application.service.app.master.business.UserService;
 
+import business.dataset.TenantDataSet;
 import business.util.LoggerUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -25,7 +30,22 @@ import business.util.LoggerUtil;
 	{ "classpath:spring/application-config.xml" })
 public class TenantTestcase
 	{
-		
+		private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(TenantTestcase.class);
+		static
+			{
+				try
+					{
+						Resource resource = new ClassPathResource("properties" + File.separator + "log4j.properties");
+						Properties properties = new Properties();
+						properties.load(resource.getInputStream());
+						PropertyConfigurator.configure(properties);
+					}
+				catch (Exception exception)
+					{
+						logger.error(exception.getLocalizedMessage(), exception);
+					}
+					
+			}
 		final private static String	FILE_NAME		= "TENANT";
 		final private static String	DATA			= FILE_NAME + File.separator + "data";
 		final private static String	TESTCASE		= FILE_NAME + File.separator + "testCase";
@@ -38,28 +58,88 @@ public class TenantTestcase
 		
 		final private static String	tenantId		= "0c1e1d29-48ca-46f8-b482-b6b31d1facee";
 		
-		@Test
-		public void createInHouseTenant() throws Exception
+		public void createTenants()
 			{
-				Tenant tenant = new Tenant();
-				tenant.setCorporateName("Loylty Rewardz Private Limited");
-				tenant.setName("Loylty Rewardz Private Limited");
-				tenant.setIsActive(true);
-				tenant.setTenantType(TenantType.IN_HOUSE);
-				tenantService.configureTenant(tenant);
+				try
+					{
+						tenantService.configureTenant(TenantDataSet.getInHouseTenant());
+						tenantService.configureTenant(TenantDataSet.getBankTenant());
+					}
+				catch (Exception exception)
+					{
+						Assert.assertTrue(exception.getLocalizedMessage(), false);
+						logger.error(exception.getLocalizedMessage(), exception);
+					}
+			}
+			
+		@Test
+		public void createInHouseTenant()
+			{
+				try
+					{
+						tenantService.configureTenant(TenantDataSet.getInHouseTenant());
+					}
+				catch (Exception exception)
+					{
+						Assert.assertTrue(exception.getLocalizedMessage(), false);
+						logger.error(exception.getLocalizedMessage(), exception);
+					}
+			}
+			
+		@Test
+		public void createBankTenant()
+			{
+				try
+					{
+						tenantService.configureTenant(TenantDataSet.getBankTenant());
+					}
+				catch (Exception exception)
+					{
+						Assert.assertTrue(exception.getLocalizedMessage(), false);
+						logger.error(exception.getLocalizedMessage(), exception);
+					}
 			}
 			
 		@Test
 		public void createUpdateProgram()
 			{
-				Program program = new Program();
-				program.setName(programName);
-				program.setStatus(Status.ACTIVE);
-				User user = userService.findUserByEmailAddress(emailAddress);
-				program.setCreatedBy(user.getId());
-				program.setModifiedBy(user.getId());
-				program.setType(ProgramType.ACRUAL);
-				tenantService.createOrUpdateProgram(program);
+				try
+					{
+						Program program = new Program();
+						program.setName(programName);
+						program.setStatus(Status.ACTIVE);
+						User user = userService.findUserByEmailAddress(emailAddress);
+						program.setCreatedBy(user.getId());
+						program.setModifiedBy(user.getId());
+						program.setType(ProgramType.ACRUAL);
+						tenantService.createOrUpdateProgram(program);
+					}
+				catch (Exception exception)
+					{
+						logger.error(exception.getLocalizedMessage(), exception);
+					}
+			}
+			
+		@Test
+		public void createMultipleProgram()
+			{
+				try
+					{
+						int count = 10;
+						String programPrefix = "Program_" + UUID.randomUUID();
+						User user = userService.findUserByEmailAddress(emailAddress);
+						for (Program program : TenantDataSet.getListOfProgram(count, programPrefix, user))
+							{
+								tenantService.createOrUpdateProgram(program);
+								program = tenantService.findProgramByProgramName(program.getName());
+								LoggerUtil.log(TESTCASE + File.separator + program.getName(), "createMultipleProgram", program);
+							}
+					}
+				catch (Exception exception)
+					{
+						logger.error(exception.getLocalizedMessage(), exception);
+						Assert.assertTrue(exception.getLocalizedMessage(), false);
+					}
 			}
 			
 		@Test

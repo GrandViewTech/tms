@@ -23,7 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.loylty.application.entity.bo.master.City;
 import com.loylty.application.entity.bo.master.Country;
 import com.loylty.application.entity.bo.master.State;
-import com.loylty.application.service.business.master.business.CountryStateCityService;
+import com.loylty.application.service.app.master.business.CountryStateCityService;
 
 import business.util.LoggerUtil;
 
@@ -142,6 +142,7 @@ public class CountryStateCityTestCase
 				System.out.println("End");
 			}
 			
+		@SuppressWarnings("deprecation")
 		private String getCellData(Cell cell)
 			{
 				try

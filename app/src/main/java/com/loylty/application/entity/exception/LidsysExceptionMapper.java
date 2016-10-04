@@ -44,6 +44,8 @@ public class LidsysExceptionMapper implements ExceptionMapper<LidsysWebServiceEx
 				String tenantName = (tenant == null) ? tenantId : tenant.getCorporateName();
 				try
 					{
+						String log = objectWriter.writeValueAsString(lidsysWebServiceException);
+						logOnConsole(log);
 						if ( userId.contains("@") )
 							{
 								userId = StringUtils.split(userId, "@")[0];
@@ -60,7 +62,7 @@ public class LidsysExceptionMapper implements ExceptionMapper<LidsysWebServiceEx
 								FileUtils.forceMkdir(file);
 							}
 						FileWriter fileWriter = new FileWriter(new File(path + File.separator + fileName));
-						fileWriter.write(objectWriter.writeValueAsString(lidsysWebServiceException));
+						fileWriter.write(log);
 						fileWriter.flush();
 						fileWriter.close();
 					}
@@ -70,6 +72,11 @@ public class LidsysExceptionMapper implements ExceptionMapper<LidsysWebServiceEx
 					}
 				ErrorResponse errorResponse = new ErrorResponse(lidsysWebServiceException);
 				return Response.serverError().header("exception", lidsysWebServiceException.getMessage()).encoding("utf-8").entity(errorResponse).status(lidsysWebServiceException.getStatus()).build();
+			}
+			
+		private void logOnConsole(String log)
+			{
+				logger.error(log);
 			}
 			
 	}

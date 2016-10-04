@@ -1,14 +1,17 @@
 package com.loylty.application.entity.exception;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 public class UnAuthorizedAccessException extends RuntimeException
 	{
-		private static final long	serialVersionUID	= 6158594750135335525L;
+		private static final long			serialVersionUID	= 6158594750135335525L;
 		
-		private String				tenantId;
-		private String				userId;
-		private String[]			requiredRoles;
-		private String[]			requiredActivities;
-		private String				api;
+		private String						tenantId;
+		private String						userId;
+		private Map<String, List<String>>	privileges			= new LinkedHashMap<String, List<String>>();
+		private String						api;
 		
 		public String getApi()
 			{
@@ -48,24 +51,14 @@ public class UnAuthorizedAccessException extends RuntimeException
 				this.userId = userId;
 			}
 			
-		public String[] getRequiredRoles()
+		public Map<String, List<String>> getPrivileges()
 			{
-				return requiredRoles;
+				return privileges;
 			}
 			
-		public void setRequiredRoles(String[] requiredRoles)
+		public void setPrivileges(Map<String, List<String>> privileges)
 			{
-				this.requiredRoles = requiredRoles;
-			}
-			
-		public String[] getRequiredActivities()
-			{
-				return requiredActivities;
-			}
-			
-		public void setRequiredActivities(String[] requiredActivities)
-			{
-				this.requiredActivities = requiredActivities;
+				this.privileges = privileges;
 			}
 			
 		public UnAuthorizedAccessException()

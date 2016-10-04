@@ -1,4 +1,4 @@
-package com.loylty.application.webservice.api;
+package com.loylty.application.service.rest.api;
 
 import java.util.List;
 
@@ -14,9 +14,8 @@ import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.loylty.application.entity.annotations.ApplicationLevelAuthorization;
-import com.loylty.application.entity.annotations.UserLevelAuthorization;
 import com.loylty.application.entity.bo.master.Tenant;
-import com.loylty.application.service.master.business.TenantService;
+import com.loylty.application.service.app.master.business.TenantService;
 
 @Path("configurationService")
 public class ConfigurationService
@@ -35,9 +34,6 @@ public class ConfigurationService
 			}
 			
 		@GET
-		@UserLevelAuthorization(roles =
-			{ "DELETE" }, activities =
-			{ "CREATE" })
 		@Consumes(MediaType.APPLICATION_JSON)
 		@Produces(MediaType.APPLICATION_JSON)
 		@Path("test/source/{sourceId}/applicationId/{applicationId}/tenantId/{tenantId}/userId/{userId}")

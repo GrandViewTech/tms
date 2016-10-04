@@ -15,8 +15,11 @@ import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.loylty.application.entity.annotations.ApplicationLevelAuthorization;
+import com.loylty.application.entity.annotations.Role;
+import com.loylty.application.entity.annotations.UserLevelAuthorization;
 import com.loylty.application.entity.bo.constants.TenantType;
-import com.loylty.application.service.business.master.business.TenantService;
+import com.loylty.application.entity.bo.master.Program;
+import com.loylty.application.service.app.master.business.TenantService;
 
 @Path("resourceWebService")
 public class ResourceWebService
@@ -47,5 +50,17 @@ public class ResourceWebService
 						tenantTypes.add(tenantType.getTenantType());
 					}
 				return tenantTypes;
+			}
+			
+		@GET
+		@Consumes(MediaType.APPLICATION_JSON)
+		@Produces(MediaType.APPLICATION_JSON)
+		@Path("getProgramList/tenantId/{tenantId}/userId/{userId}")
+		@UserLevelAuthorization(roles =
+			{ @Role(name = "CRUD", activities =
+						{ "CREATE" }) })
+		public List<Program> getProgramList(@PathParam("tenantId") String tenantId, @PathParam("userId") String userId, @DefaultValue("false") @QueryParam("isDeactivatedRequired") boolean isDeactivatedRequired)
+			{
+				return tenantService.findAllProgram(isDeactivatedRequired);
 			}
 	}

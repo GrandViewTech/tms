@@ -22,7 +22,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loylty.application.entity.bo.master.Currency;
-import com.loylty.application.service.business.master.business.CurrencyService;
+import com.loylty.application.service.app.master.business.CurrencyService;
 
 import business.util.LoggerUtil;
 

@@ -17,12 +17,9 @@
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
-	<context:component-scan base-package="com.loylty.application.enviornment,com.loylty.application.service.master.business.impl,com.loylty.application.service.master.dao.impl" />
+	<context:component-scan base-package="com.loylty.application.enviornment" />
 
-	<bean id="restApiAcessValidation" class="com.loylty.application.webservice.validation.RestApiAcessValidation" />
-
-	<!-- Property Files -->
-	<context:property-placeholder location="classpath:database.properties,classpath:properties/application.properties" ignore-unresolvable="false" order="1" />
+	<context:property-placeholder location="classpath:properties/database.properties,classpath:properties/application.properties" ignore-unresolvable="false" order="1" />
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
 		<!-- Connection Properties -->
 		<property name="driverClass" value="${jdbc.driverClassName}" />
@@ -55,17 +52,17 @@
 	<tx:annotation-driven />
 	<!-- Web Service @author : puneet.sharma@loylty.com -->
 	<bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
-	<bean id="configurationService" class="com.loylty.application.webservice.api.ConfigurationService" />
-	<bean id="resourceWebService" class="com.loylty.application.webservice.api.ResourceWebService" />
+	<bean id="configurationService" class="com.loylty.application.service.rest.api.ConfigurationService" />
+	<bean id="resourceWebService" class="com.loylty.application.service.rest.api.ResourceWebService" />
 	<!-- Exception Handling -->
 	<bean id="lidsysExceptionMapper" class="com.loylty.application.entity.exception.LidsysExceptionMapper">
 		<property name="logPath" value="${logPath}" />
 	</bean>
-	
+
 	<jaxrs:server id="lidsysRestfulWebService" address="/rest/">
 		<jaxrs:serviceBeans>
 			<ref bean="configurationService" />
-			<ref bean="resourceWebService"/>
+			<ref bean="resourceWebService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />

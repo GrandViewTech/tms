@@ -13,14 +13,9 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target(METHOD)
-/**
- * @author puneets
- *
- */
 public @interface UserLevelAuthorization
 	{
-		
-		String[] roles() default "default";
-		
-		String[] activities() default "default";
+		Role[] roles() default
+			{};
+			
 	}

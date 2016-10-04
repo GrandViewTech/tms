@@ -1,11 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.loyltyrewardz</groupId>
-		<artifactId>suite</artifactId>
+		<groupId>${global.groupId}</groupId>
 		<version>${global.version}</version>
+		<artifactId>${global.artifactId}</artifactId>
 	</parent>
 	<artifactId>domainEntity</artifactId>
+	<groupId>${global.groupId}</groupId>
+	<version>${global.version}</version>
 
 	<dependencies>
 		<dependency>
@@ -29,14 +31,26 @@
 			<artifactId>spring-orm</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.connector.java.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api -->
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>${javax.ws.rs-api.version}</version>
+		</dependency>	
+		<!-- https://mvnrepository.com/artifact/org.springframework.data/spring-data-mongodb-parent -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-mongodb</artifactId>
+			<version>${spring-data-mongodb.version}</version>
+		</dependency>
 	</dependencies>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>onejar-maven-plugin.googlecode.com</id>
-			<url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
-		</pluginRepository>
-	</pluginRepositories>
+	<!-- <pluginRepositories> <pluginRepository> <id>onejar-maven-plugin.googlecode.com</id> <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url> </pluginRepository> </pluginRepositories> -->
 	<build>
 		<plugins>
 			<!-- <plugin> <groupId>com.jolira</groupId> <artifactId>onejar-maven-plugin</artifactId> <version>1.4.4</version> <executions> <execution> <goals> <goal>one-jar</goal> </goals> </execution> </executions> </plugin> -->

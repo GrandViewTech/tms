@@ -10,5 +10,6 @@
 		<class>com.loylty.application.entity.bo.master.State</class>
 		<class>com.loylty.application.entity.bo.master.City</class>
 		<class>com.loylty.application.entity.bo.master.Currency</class>
+		<class>com.loylty.application.entity.bo.master.Program</class>
 	</persistence-unit>
 </persistence>
