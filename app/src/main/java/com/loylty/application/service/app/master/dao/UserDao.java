@@ -1,5 +1,7 @@
 package com.loylty.application.service.app.master.dao;
 
+import java.util.List;
+
 import com.loylty.application.entity.bo.master.User;
 
 public interface UserDao
@@ -10,5 +12,7 @@ public interface UserDao
 		public User update(User user);
 		
 		public User findUserByEmailAddress(String emailAddress);
+		
+		public List<User> findUsersByUserIds(List<String> userIds);
 		
 	}

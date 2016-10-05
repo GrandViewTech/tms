@@ -9,11 +9,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @Component
 public class CorsFilter
 	{
+		private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(CorsFilter.class);
+		
 		@Bean
 		public static WebMvcConfigurer corsConfigurer()
 			{
+				logger.info("Loading CorsFilter....");
 				return new WebMvcConfigurerAdapter()
 					{
+						
 						@Override
 						public void addCorsMappings(CorsRegistry registry)
 							{

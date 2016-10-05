@@ -2,10 +2,13 @@ package business;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.PropertyConfigurator;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +76,22 @@ public class UserServiceTestCase
 			}
 			
 		@Test
+		public void createUser2()
+			{
+				String emailAddress = "Utkarsh.deep@lotlty.com";
+				User user = new User();
+				user.setDisplayName("Utkarsh Deep");
+				user.setFirstName("Utkarsh");
+				user.setLastName("Deep");
+				user.setMobileNumber("9793566416");
+				user.setEmailAddress(emailAddress);
+				userService.createOrUpdateUser(user);
+				User updated = userService.findUserByEmailAddress(emailAddress);
+				Assert.assertTrue("Email Address does not match", emailAddress.trim().equalsIgnoreCase(updated.getEmailAddress()));
+				
+			}
+			
+		@Test
 		public void createActivity()
 			{
 				Activity activity = new Activity();
@@ -109,5 +128,32 @@ public class UserServiceTestCase
 					{
 						logger.error(exception.getLocalizedMessage(), exception);
 					}
+			}
+			
+		@Test
+		public void findUsersByUserIds()
+			{
+				List<String> userIds = new ArrayList<String>();
+				userIds.add("4028e6fa578ed4a501578ed4b4be0000");
+				userIds.add("4028e6fa579450ed015794513ac00000");
+				Map<String, Object> results = new LinkedHashMap<String, Object>();
+				results.put("userIds", userIds);
+				List<User> users = userService.findUsersByUserIds(userIds);
+				results.put("users", users);
+				for (User user : users)
+					{
+						String id = user.getId();
+						boolean isUserFound = false;
+						for (String testData : userIds)
+							{
+								if ( testData.trim().equalsIgnoreCase(id.trim()) )
+									{
+										isUserFound = true;
+										break;
+									}
+							}
+						Assert.assertTrue("User Id  does not match", isUserFound);
+					}
+				LoggerUtil.log(TESTCASE, "findUsersByUserIds", results);
 			}
 	}

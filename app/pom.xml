@@ -208,7 +208,12 @@
 		</dependency>
 
 	</dependencies>
-	<!-- <pluginRepositories> <pluginRepository> <id>onejar-maven-plugin.googlecode.com</id> <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url> </pluginRepository> </pluginRepositories> -->
+	<pluginRepositories>
+		<pluginRepository>
+			<id>onejar-maven-plugin.googlecode.com</id>
+			<url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
+		</pluginRepository>
+	</pluginRepositories>
 	<build>
 		<plugins>
 			<!-- <plugin> <groupId>com.jolira</groupId> <artifactId>onejar-maven-plugin</artifactId> <version>1.4.4</version> <executions> <execution> <goals> <goal>one-jar</goal> </goals> </execution> </executions> </plugin> -->

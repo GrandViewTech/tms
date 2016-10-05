@@ -12,4 +12,6 @@ public interface UserService
 		public User createOrUpdateUser(User user);
 		
 		public User assignRolesToUser(String emailAddress, List<Role> roles);
+		
+		public List<User> findUsersByUserIds(List<String> userIds);
 	}

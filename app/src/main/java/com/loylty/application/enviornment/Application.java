@@ -23,11 +23,6 @@ import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-import com.loylty.application.entity.bo.constants.Category;
-import com.loylty.application.entity.bo.constants.Level;
-import com.loylty.application.entity.bo.constants.Type;
-import com.loylty.application.entity.bo.event.Event;
-import com.loylty.application.entity.bo.event.Notification;
 import com.loylty.application.entity.bo.master.Tenant;
 import com.loylty.application.service.app.master.business.NotificationService;
 import com.loylty.application.service.app.master.business.TenantService;
@@ -38,9 +33,14 @@ import com.mongodb.MongoClientURI;
 @EnableAsync
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@ComponentScan(basePackages =
-	{ "com.loylty.application.service.app", "com.loylty.application.service.rest.validation" })
+/*
+ * @ComponentScan(basePackages = { "com.loylty.application.service.app",
+ * "com.loylty.application.service.rest.validation" })
+ */
+
 @EnableMongoRepositories(basePackages = "com.loylty.application.service.app.master.respository")
+@ComponentScan(basePackages =
+	{ "com.loylty.application" })
 @PropertySource(value = "classpath:properties/application.properties")
 public class Application
 	{
@@ -78,16 +78,18 @@ public class Application
 				List<Tenant> tenants = tenantService.findAllTenant(isDeactiveRequired);
 				for (Tenant tenant : tenants)
 					{
-						SpringContext.initializeTenantAndLoadBeanFactory(tenant);
-						Notification notification = new Notification();
-						Event event = new Event();
-						event.setCategory(Category.NOTIFICATION);
-						event.setLevel(Level.INFO);
-						event.setType(Type.APPLICATION);
-						event.setTenantId(tenant.getTenantId());
-						event.setMessage("Tenant with TenantId : " + tenant.getTenantId() + " Loaded Successfully");
-						notification.setEvent(event);
-						notificationService.createNotification(notification);
+						String message = "";
+						try
+							{
+								SpringContext.initializeTenantAndLoadBeanFactory(tenant);
+								message = ("Tenant with TenantId : " + tenant.getTenantId() + " Successfully Loaded");
+							}
+						catch (Exception exception)
+							{
+								logger.error("Error While Loading Tenant with TenantId : " + tenant.getTenantId(), exception);
+								message = ("Tenant with TenantId : " + tenant.getTenantId() + " Failed while Loading | Exception : " + exception.getLocalizedMessage());
+							}
+						notificationService.createNotificationForInitializationOfTenant(tenant, message);
 					}
 			}
 			

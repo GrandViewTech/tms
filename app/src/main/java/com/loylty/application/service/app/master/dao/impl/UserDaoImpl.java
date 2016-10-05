@@ -45,4 +45,14 @@ public class UserDaoImpl implements UserDao
 					}
 				return user;
 			}
+			
+		@Override
+		public List<User> findUsersByUserIds(List<String> userIds)
+			{
+				String hqlQuery = "SELECT user FROM User user where user.id IN :id";
+				TypedQuery<User> typedQuery = entityManager.createQuery(hqlQuery, User.class);
+				typedQuery.setParameter("id", userIds);
+				return typedQuery.getResultList();
+			}
+			
 	}

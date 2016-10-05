@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -19,13 +20,19 @@ import com.loylty.application.entity.annotations.Role;
 import com.loylty.application.entity.annotations.UserLevelAuthorization;
 import com.loylty.application.entity.bo.constants.TenantType;
 import com.loylty.application.entity.bo.master.Program;
+import com.loylty.application.entity.bo.master.User;
 import com.loylty.application.service.app.master.business.TenantService;
+import com.loylty.application.service.app.master.business.UserService;
+import com.loylty.application.service.util.SpringContext;
 
 @Path("resourceWebService")
 public class ResourceWebService
 	{
 		@Autowired
-		private TenantService tenantService;
+		private TenantService	tenantService;
+		
+		@Autowired
+		private UserService		userService;
 		
 		@GET
 		@Consumes(MediaType.APPLICATION_JSON)
@@ -62,5 +69,25 @@ public class ResourceWebService
 		public List<Program> getProgramList(@PathParam("tenantId") String tenantId, @PathParam("userId") String userId, @DefaultValue("false") @QueryParam("isDeactivatedRequired") boolean isDeactivatedRequired)
 			{
 				return tenantService.findAllProgram(isDeactivatedRequired);
+			}
+			
+		@POST
+		@Consumes(MediaType.APPLICATION_JSON)
+		@Produces(MediaType.APPLICATION_JSON)
+		@Path("findUsersByUserIds/tenantId/{tenantId}/userId/{userId}")
+		@UserLevelAuthorization(roles =
+			{ @Role(name = "CRUD", activities =
+						{ "CREATE" }) })
+		public List<User> findUsersByUserIds(@PathParam("tenantId") String tenantId, @PathParam("userId") String userId, List<String> userIds)
+			{
+				if ( SpringContext.isInHouseTenantId(tenantId) )
+					{
+						return userService.findUsersByUserIds(userIds);
+					}
+				else
+					{
+						UserService userService = (UserService) SpringContext.getBean(tenantId, "userService");
+						return userService.findUsersByUserIds(userIds);
+					}
 			}
 	}
