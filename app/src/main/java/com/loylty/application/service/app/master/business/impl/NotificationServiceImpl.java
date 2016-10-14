@@ -93,7 +93,7 @@ public class NotificationServiceImpl implements NotificationService
 					}
 			}
 			
-		@Scheduled(fixedRate = 300000 * 2)
+		//@Scheduled(fixedRate = 300000 * 2)
 		public void resendFailedNotification()
 			{
 				for (Notification failedNotification : notificationRepository.findByIsNotified(false))

@@ -168,4 +168,10 @@ public class TenantServiceImpl implements TenantService
 			{
 				return tenantDao.findAllProgram(isDeactivatedRequired);
 			}
+			
+		@Override
+		public Program findProgramByProgramId(String programId)
+			{
+				return tenantDao.findProgramById(programId);
+			}
 	}

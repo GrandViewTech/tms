@@ -3,7 +3,7 @@ package com.loylty.application.entity.bo.constants;
 public enum ProgramType
 	{
 		
-	ACRUAL("ACRUAL"), REDEMPTION("REDEMPTION"), ACRUAL_REDEMPTION("REDEMPTION");
+	ACRUAL("ACRUAL"), REDEMPTION("REDEMPTION"), ACRUAL_REDEMPTION("ACRUAL REDEMPTION");
 		
 		private String programType;
 		

@@ -23,6 +23,8 @@ public interface TenantService
 		
 		public Program findProgramByProgramName(String programName);
 		
+		public Program findProgramByProgramId(String programId);
+		
 		public Tenant findTenantByTenantId(String tenantId);
 		
 		public List<Program> findAllProgram(boolean isDeactivatedRequired);
